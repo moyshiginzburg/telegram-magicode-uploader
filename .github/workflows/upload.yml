@@ -1,0 +1,66 @@
+name: Magicode Cloud Uploader 🚀
+
+on:
+  workflow_dispatch:
+    inputs:
+      url:
+        description: "Target URL to download and upload"
+        required: true
+        type: string
+      chat_id:
+        description: "Telegram Chat ID to notify"
+        required: false
+        type: string
+      message_id:
+        description: "Telegram Message ID to reply to"
+        required: false
+        type: string
+      status_message_id:
+        description: "Telegram Message ID of the status message to edit"
+        required: false
+        type: string
+      custom_filename:
+        description: "Custom output filename (optional)"
+        required: false
+        type: string
+
+jobs:
+  upload:
+    name: Download and Upload to Magicode
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Mask sensitive inputs
+        run: |
+          echo "::add-mask::${{ inputs.url }}"
+
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+          cache: "pip"
+
+      - name: Install system dependencies (ffmpeg)
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends ffmpeg
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run Uploader Engine
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+        run: |
+          python uploader.py \
+            --url "${{ inputs.url }}" \
+            ${{ inputs.chat_id != '' && format('--chat-id "{0}"', inputs.chat_id) || '' }} \
+            ${{ inputs.message_id != '' && format('--message-id "{0}"', inputs.message_id) || '' }} \
+            ${{ inputs.status_message_id != '' && format('--status-message-id "{0}"', inputs.status_message_id) || '' }} \
+            ${{ inputs.custom_filename != '' && format('--filename "{0}"', inputs.custom_filename) || '' }}

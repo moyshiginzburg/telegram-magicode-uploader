@@ -1,0 +1,11 @@
+name = "telegram-magicode-worker"
+main = "index.js"
+compatibility_date = "2024-01-01"
+
+[vars]
+GITHUB_REPO = "moyshiginzburg/telegram-magicode-uploader"
+GITHUB_BRANCH = "main"
+
+[[kv_namespaces]]
+binding = "MAGICODE_USERS"
+id = "7515351bf4064840b915ff152bd385e3"

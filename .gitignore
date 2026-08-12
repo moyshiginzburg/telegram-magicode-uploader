@@ -1,0 +1,22 @@
+# Python & environment
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.venv/
+env/
+
+# Project data & ephemeral cache
+local_data/
+temp_cache/
+*.session
+*.session-journal
+*.log
+
+# Environment variables
+.env
+.env.local
+
+# Operating System files
+.DS_Store
+Thumbs.db
